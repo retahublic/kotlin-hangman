@@ -1,0 +1,47 @@
+import kotlin.random.Random
+
+fun main() {
+    val words = listOf("programming", "hangman", "kotlin", "computer", "language")
+    val randomIndex = Random.nextInt(words.size)
+    val chosenWord = words[randomIndex]
+    val guessedLetters = mutableSetOf<Char>()
+    var remainingAttempts = 6
+
+    println("Welcome to Hangman!")
+    println("Guess the word: ${maskWord(chosenWord, guessedLetters)}")
+
+    while (remainingAttempts > 0) {
+        print("Guess a letter: ")
+        val guess = readLine()?.toLowerCase()?.firstOrNull() ?: continue
+
+        if (guessedLetters.contains(guess)) {
+            println("You already guessed '$guess'")
+            continue
+        }
+
+        guessedLetters.add(guess)
+
+        if (chosenWord.contains(guess)) {
+            println("Correct guess!")
+        } else {
+            remainingAttempts--
+            println("Incorrect guess! Remaining attempts: $remainingAttempts")
+        }
+
+        val maskedWord = maskWord(chosenWord, guessedLetters)
+        println("Current progress: $maskedWord")
+
+        if (maskedWord == chosenWord) {
+            println("Congratulations! You've guessed the word: $chosenWord")
+            break
+        }
+    }
+
+    if (remainingAttempts == 0) {
+        println("You're out of attempts! The word was: $chosenWord")
+    }
+}
+
+fun maskWord(word: String, guessedLetters: Set<Char>): String {
+    return word.map { if (guessedLetters.contains(it)) it else '_' }.joinToString(" ")
+}
